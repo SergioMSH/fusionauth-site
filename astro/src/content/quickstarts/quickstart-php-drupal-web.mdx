@@ -21,7 +21,7 @@ You will create a Drupal application and integrate it with FusionAuth in this qu
 You'll be creating it for [ChangeBank](https://www.youtube.com/watch?v=CXDxNCzUspM), a leader in the world of coin-to-dollar conversion. Both public facing sections and areas designated for logged-in users will be present.
 
 The docker compose file and source code for a complete application are available at
-https://github.com/FusionAuth/fusionauth-quickstart-drupal-web
+https://github.com/FusionAuth/fusionauth-php-quickstart-drupal-web
 
 ## Prerequisites
 
@@ -30,7 +30,7 @@ https://github.com/FusionAuth/fusionauth-quickstart-drupal-web
 - [Drush](https://www.drupal.org/): This is used to control, manipulate and manage the Drupal application from the command line.
 - [Docker](https://www.docker.com): The quickest way to stand up FusionAuth. (There are [other ways](/docs/v1/tech/installation-guide/)).
 
-This app has been tested with Drupal 10.1.3. This example should work with other compatible versions of Drupal 10.
+This app has been tested with Drupal 10.1.5. This example should work with other compatible versions of Drupal 10.
 
 <Aside type="note">
 Drupal 10 requires PHP 8.1.0 or higher and MariaDB 10.3.7+ or MySQL/Percona 5.7.8+ in order to run.
@@ -140,49 +140,63 @@ At your terminal, make sure you are inside the Drupal project directory and run 
 ```bash
 drush generate module 
 ```
-You will then be presented with a wizard and should aim to fill it out as follows:
+You will be presented with the module wizard. Fill it out as follows:
 
-<div style="background-color: #000; padding: 20px">
-Welcome to module generator!</br>
-<span style="color: teal">____________________________________</span><br/><br/>
-<span style="color: green">Module name</span> [<span style="color: yellow">Web</span>]:<br/>
-&rarr; Changebank<br/>
-<span style="color: green">Module machine name</span> [<span style="color: yellow">changebank</span>]:<br/>
-&rarr; changebank<br/>
-<span style="color: green">Module description</span> [<span style="color: yellow">Provides additional functionality for the site.</span>]:<br/>
-&rarr; Provides a way to make change from whole dollars.<br/>
-<span style="color: green">Package name name</span> [<span style="color: yellow">Custom</span>]:<br/>
-&rarr; Custom<br/>
-<span style="color: green">Dependencies</span> (<span style="color: green">comma separated</span>):<br/>
-&rarr;<br/>
-<span style="color: green">Would you like to create a module file</span> [<span style="color: yellow">No</span>]:<br/>
-&rarr; Yes<br/>
-<span style="color: green">Would you like to create a install file</span> [<span style="color: yellow">No</span>]:<br/>
-&rarr; No<br/>
-<span style="color: green">Would you like to create a libraries file</span> [<span style="color: yellow">No</span>]:<br/>
-&rarr; No<br/>
-<span style="color: green">Would you like to create a permissions file</span> [<span style="color: yellow">No</span>]:<br/>
-&rarr; No<br/>
-<span style="color: green">Would you like to create event subscriber</span> [<span style="color: yellow">No</span>]:<br/>
-&rarr; No<br/>
-<span style="color: green">Would you like to create block plugin</span> [<span style="color: yellow">No</span>]:<br/>
-&rarr; Yes<br/>
-<span style="color: green">Would you like to create a controller</span> [<span style="color: yellow">No</span>]:<br/>
-&rarr; Yes<br/>
-<span style="color: green">Would you like to create a settings form</span> [<span style="color: yellow">No</span>]:<br/>
-&rarr; No<br/><br/>
+```
+Welcome to module generator!
+
+Module name [Web]:
+Changebank
+
+Module machine name [changebank]:
+changebank
+
+Module description [Provides additional functionality for the site.]:
+Provides a way to make change from whole dollars.
+
+Package name name [Custom]:
+Custom
+
+Dependencies (comma separated):
+
+Would you like to create a module file [No]:
+Yes
+
+Would you like to create a install file [No]:
+No
+
+Would you like to create a libraries file [No]:
+No
+
+Would you like to create a permissions file [No]:
+No
+
+Would you like to create event subscriber [No]:
+No
+
+Would you like to create block plugin [No]:
+Yes
+
+Would you like to create a controller [No]:
+Yes
+
+Would you like to create a settings form [No]:
+No
+
 The following directories and files have been created or updated:
-<span style="color: teal">_______________________________________________________________________</span><br/>
-- /var/www/html/web/modules/custom/changebank/changebank.info.yml<br/>
-- /var/www/html/web/modules/custom/changebank/changebank.module<br/>
-- /var/www/html/web/modules/custom/changebank/changebank.routing.yml<br/>
-- /var/www/html/web/modules/custom/changebank/src/Controller/ChangebankController.php<br/>
+
+- /var/www/html/web/modules/custom/changebank/changebank.info.yml
+- /var/www/html/web/modules/custom/changebank/changebank.module
+- /var/www/html/web/modules/custom/changebank/changebank.routing.yml
+- /var/www/html/web/modules/custom/changebank/src/Controller/ChangebankController.php
 - /var/www/html/web/modules/custom/changebank/src/Plugin/Block/ExampleBlock.info.yml
-</div><br/>
+```
 
-The first block that was created when we generatd the module has a filename of <strong>ExampleBlock.php</strong> which is far too generic.
 
-Navigate to /web/modules/custom/changebank/src/Plugin/Block/ and rename it to <strong>UserLoginLogoutBlock.php</strong> which is more descriptive of its intended purpose.
+
+The first block that was created when we generatd the module has a filename of `ExampleBlock.php` which is far too generic.
+
+Navigate to /web/modules/custom/changebank/src/Plugin/Block/ and rename it to `UserLoginLogoutBlock.php` which is more descriptive of its intended purpose.
 
 We're also going to generate an additional block and a form which we will do now.
 
@@ -192,66 +206,80 @@ To generate the block, run the following command and complete the wizard:
 drush generate block 
 ```
 
-<div style="background-color: #000; padding: 20px">
-Welcome to block generator!</br>
-<span style="color: teal">____________________________________</span><br/><br/>
-<span style="color: green">Module machine name</span> [<span style="color: yellow">web</span>]:<br/>
-&rarr; changebank<br/>
-<span style="color: green">Block admin label</span> [<span style="color: yellow">Example</span>]:<br/>
-&rarr; User Email Block<br/>
-<span style="color: green">Plugin ID</span> [<span style="color: yellow">changebank_useremailblock</span>]:<br/>
-&rarr; useremailblock<br/>
-<span style="color: green">Plugin class</span> [<span style="color: yellow">UserEmailBlockBlock</span>]:<br/>
-&rarr; UserEmailBlock<br/>
-<span style="color: green">Block category</span> [<span style="color: yellow">Custom</span>]:<br/>
-&rarr; Custom<br/>
-<span style="color: green">Make the block configurable?</span> [<span style="color: yellow">No</span>]:<br/>
-&rarr; No<br/>
-<span style="color: green">Would you like to inject dependencies?</span> [<span style="color: yellow">No</span>]:<br/>
-&rarr; No<br/>
-<span style="color: green">Create access callback?</span> [<span style="color: yellow">No</span>]:<br/>
-&rarr; No<br/><br/>
+You will be presented with the block wizard. Fill it out as follows:
+
+```
+Welcome to block generator!
+
+Module machine name [web]:
+changebank
+
+Block admin label [Example]:
+User Email Block
+
+Plugin ID [changebank_useremailblock]:
+useremailblock
+
+Plugin class [UserEmailBlockBlock]:
+UserEmailBlock
+
+Block category [Custom]:
+Custom
+
+Make the block configurable? [No]:
+No
+
+Would you like to inject dependencies? [No]:
+No
+
+Create access callback? [No]:
+No
 
 The following directories and files have been created or updated:
-<span style="color: teal">_______________________________________________________________________</span><br/>
-- /var/www/html/web/modules/custom/changebank/src/Plugin/Block/UserEmailBlock.php<br/>
-</div><br/>
 
-To generate the form, run the following command and complete that wizard too:
+- /var/www/html/web/modules/custom/changebank/src/Plugin/Block/UserEmailBlock.php
+```
+
+To generate the form, run the following command:
 
 ```bash
 drush generate form 
 ```
 
-<div style="background-color: #000; padding: 20px">
-Welcome to form generator!</br>
-<span style="color: teal">____________________________________</span><br/><br/>
-<span style="color: green">Module machine name</span> [<span style="color: yellow">web</span>]:<br/>
-&rarr; changebank<br/>
-<span style="color: green">Class</span> [<span style="color: yellow">ExampleForm</span>]:<br/>
-&rarr; ChangebankForm<br/>
-<span style="color: green">Would you like to create a route for this form?</span> [<span style="color: yellow">Yes</span>]:<br/>
-&rarr; No<br/><br/>
+You will be presented with the form wizard. Fill it out as follows:
+
+```
+Welcome to form generator!
+
+Module machine name [web]:
+changebank
+
+Class [ExampleForm]:
+ChangebankForm
+
+Would you like to create a route for this form? [Yes]:
+No
 
 The following directories and files have been created or updated:
-<span style="color: teal">_______________________________________________________________________</span><br/>
-- /var/www/html/web/modules/custom/changebank/src/Form/ChangebankForm.php<br/>
-</div><br/>
+
+- /var/www/html/web/modules/custom/changebank/src/Form/ChangebankForm.php
+```
+
 
 ### Customizing the Module
 
 Next, we are going to customize the module by making changes to the following files:
 
-- <strong>ChangebankForm.php</strong>
-- <strong>ChangebankController.php</strong>
-- <strong>changebank.routing.yml</strong>
-- <strong>UserEmailBlock.php</strong>
-- <strong>UserLoginLogoutBlock.php</strong>
-- <strong>changebank.module</strong>
+- `ChangebankForm.php`
+- `ChangebankController.php`
+- `changebank.routing.yml`
+- `UserEmailBlock.php`
+- `UserLoginLogoutBlock.php`
+- `changebank.module`
 
 #### Customizing the Changebank Form
 
-Select the form <strong>ChangebankForm.php</strong> located at /web/modules/custom/changebank/src/Form/ in your text editor, clear the existing boilerplate contents and add the following in:
+Select the form `ChangebankForm.php` located at /web/modules/custom/changebank/src/Form/ in your text editor, clear the existing boilerplate contents and add the following in:
 
 ```php
 <?php
@@ -358,7 +386,7 @@ class ChangebankForm extends FormBase {
 
 #### Customizing the Controller
 
-Select the <strong>ChangebankController.php</strong> file located at /web/modules/custom/changebank/src/Controller/ in your text editor and make the following changes:
+Select the `ChangebankController.php` file located at /web/modules/custom/changebank/src/Controller/ in your text editor and make the following changes:
 
 ```php
 <?php
@@ -390,7 +418,7 @@ class ChangebankController extends ControllerBase {
     $arguments = $value->getArguments();
     $dollars = $arguments['@dollars'];
     return [
-      '#markup' => '<span class="account-balance">$' . $dollars . '</span>',
+      '#markup' => '<span class="account-balance">$' . $dollars . '',
       '#cache' => [
         'contexts' => [
           'session',
@@ -405,7 +433,7 @@ class ChangebankController extends ControllerBase {
 
 #### Customizing the Routing
 
-Next we're going to setup two routes, one for the form and one for the account page. Select the <strong>changebank.routing.yml</strong> file located at /web/modules/custom/changebank/ and make the following changes:
+Next we're going to setup two routes, one for the form and one for the account page. Select the `changebank.routing.yml` file located at /web/modules/custom/changebank/ and make the following changes:
 
 ```yaml
 changebank.makechange:
@@ -428,7 +456,7 @@ changebank.account:
 
 #### Customizing User Email Block
 
-We want to display the current user's email address in a block and we're going to use the User Email Block to do so. Select the <strong>UserEmailBlock.php</strong> file located at /web/modules/custom/changebank/src/Plugin/Block/ and make the following changes:
+We want to display the current user's email address in a block and we're going to use the User Email Block to do so. Select the `UserEmailBlock.php` file located at /web/modules/custom/changebank/src/Plugin/Block/ and make the following changes:
 
 ```php
 <?php
@@ -501,7 +529,7 @@ class UserEmailBlock extends BlockBase implements ContainerFactoryPluginInterfac
 
 #### Customizing User Login Logout Block
 
-We're going to create a block that will display a login button for anonymous users and a logout button for authenticated users. Select the <strong>UserLoginLogoutBlock.php</strong> file located at /web/modules/custom/changebank/src/Plugin/Block/ and make the following changes:
+We're going to create a block that will display a login button for anonymous users and a logout button for authenticated users. Select the `UserLoginLogoutBlock.php` file located at /web/modules/custom/changebank/src/Plugin/Block/ and make the following changes:
 
 ```php
 <?php
@@ -581,7 +609,7 @@ class UserLoginLogoutBlock extends BlockBase implements ContainerFactoryPluginIn
 
 #### Customizing the .Module File
 
-In order to make the blocks available to the application, we need to make some changes to the <strong>changebank.module</strong> file located at /web/modules/custom/changebank/ and add the following:
+In order to make the blocks available to the application, we need to make some changes to the `changebank.module` file located at /web/modules/custom/changebank/ and add the following:
 
 ```php
 <?php
@@ -631,19 +659,19 @@ composer require 'drupal/bootstrap_barrio:^5.5'
 
 Now, we're going to enable the theme.
 
-Select the <strong>Appearance</strong> link in the administration menu and click on the <strong>Install</strong> button for both Bootstrap Barrio 5.5.14 and Bootstrap Barrio Subtheme 5.5.14.
+Select the `Appearance` link in the administration menu and click on the `Install` button for both Bootstrap Barrio 5.5.14 and Bootstrap Barrio Subtheme 5.5.14.
 
-Click on the <strong>Set as default</strong> button for Bootstrap Barrio Subtheme 5.5.14.
+Click on the `Set as default` button for Bootstrap Barrio Subtheme 5.5.14.
 
 While we are here, let's add the Changebank logo to our application.
 
-Click on <strong>Settings</strong> on Bootstrap Barrio Subtheme 5.5.14, scroll down and click on <strong>Logo image</strong>.
+Click on `Settings` on Bootstrap Barrio Subtheme 5.5.14, scroll down and click on `Logo image`.
 
-Uncheck the <strong>Use the logo supplied by the theme</strong> checkbox and upload the Changebank logo from ****
+Uncheck the `Use the logo supplied by the theme` checkbox and upload the Changebank logo from ****
 
 #### Customizing the Stylesheet
 
-Next, we're going to add some styling to the application to make it look a little nicer. Select the <strong>styles.css</strong> file located at /web/themes/custom/changebank/css/ and add the following:
+Next, we're going to add some styling to the application to make it look a little nicer. Select the `styles.css` file located at /web/themes/custom/changebank/css/ and add the following:
 
 ```css
 #navbar-top {
@@ -772,43 +800,43 @@ h1, h2, h3, h4, h5, h6 {
 
 Since we created the routes for the form and account page, we're going to add a menu to the application to make it easier to navigate between the two pages.
 
-Hover over <strong>Structure</strong> > <strong>Menus</strong> in the administration menu and click on <strong>Add menu</strong>.
+Hover over `Structure` > `Menus` in the administration menu and click on `Add menu`.
 
-Enter <strong>Changebank Menu</strong> for the <strong>Title</strong> and click on <strong>Save</strong>.
+Enter `Changebank Menu` for the `Title` and click on `Save`.
 
 #### Add Menu Links
 
-Hover over <strong>Structure</strong> > <strong>Menus</strong> in the administration menu and click on <strong>Changebank Menu</strong>.
+Hover over `Structure` > `Menus` in the administration menu and click on `Changebank Menu`.
 
-Click on <strong>Add link</strong> and enter the following:
+Click on `Add link` and enter the following:
 
-- <strong>Menu link title</strong>: Account
-- <strong>Link</strong>: /account
+- `Menu link title`: Account
+- `Link`: /account
 
-Click on <strong>Save</strong>.
+Click on `Save`.
 
-Click on <strong>Add link</strong> again and enter the following:
+Click on `Add link` again and enter the following:
 
-- <strong>Menu link title</strong>: Make Change
-- <strong>Link</strong>: /makechange
+- `Menu link title`: Make Change
+- `Link`: /makechange
 
-Click on <strong>Save</strong>.
+Click on `Save`.
 
 ### Enable Blocks
 
 Now that we have the User Email, User Login Logout, and the Changebank Menu Blocks, we need to enable them.
 
-Hover over <strong>Structure</strong> in the administration menu and click on <strong>Block layout</strong>.
+Hover over `Structure` in the administration menu and click on `Block layout`.
 
 #### Enable Changebank Menu Block
 
-Scroll down to the <strong>Primary Menu</strong> region and click on <strong>Place block</strong>. Type <strong>Changebank Menu</strong> in the filter field and click on <strong>Place block</strong> to place the block into the region.
+Scroll down to the `Primary Menu` region and click on `Place block`. Type `Changebank Menu` in the filter field and click on `Place block` to place the block into the region.
 
-Uncheck the <strong>Display title</strong> checkbox since we don't want the title to be displayed.
+Uncheck the `Display title` checkbox since we don't want the title to be displayed.
 
-Click on the <strong>Roles</strong> tab under Visibility and select the <strong>Authenticated user</strong> role.
+Click on the `Roles` tab under Visibility and select the `Authenticated user` role.
 
-Click on <strong>Save block</strong>.
+Click on `Save block`.
 
 <Aside type="note">
 Although we set the access restriction to the account and makechange routes to authenticated (logged in) users in our custom module, we also want to make sure that the menu itself is only visible to authenticated users as well.
@@ -816,37 +844,37 @@ Although we set the access restriction to the account and makechange routes to a
 
 #### Enable User Email Block
 
-Similar to the Changebank Menu Block, we're going to scroll down to the <strong>Secondary Menu</strong> region and click on <strong>Place block</strong>.
+Similar to the Changebank Menu Block, we're going to scroll down to the `Secondary Menu` region and click on `Place block`.
 
-Type <strong>User Email Block</strong> in the filter field and click on <strong>Place block</strong> to place the block into the region.
+Type `User Email Block` in the filter field and click on `Place block` to place the block into the region.
 
-Uncheck the <strong>Display title</strong> checkbox and click on the <strong>Roles</strong> tab under Visibility and select the <strong>Authenticated user</strong> role.
+Uncheck the `Display title` checkbox and click on the `Roles` tab under Visibility and select the `Authenticated user` role.
 
-Click on <strong>Save block</strong>.
+Click on `Save block`.
 
 #### Enable User Login Logout Block
 
-As with the User Email Block, we're going to scroll down to the <strong>Secondary Menu</strong> region and click on <strong>Place block</strong>.
+As with the User Email Block, we're going to scroll down to the `Secondary Menu` region and click on `Place block`.
 
-Type <strong>User Login Logout Block</strong> in the filter field and click on <strong>Place block</strong> to place the block into the region.
+Type `User Login Logout Block` in the filter field and click on `Place block` to place the block into the region.
 
-Uncheck the <strong>Display title</strong> checkbox.
+Uncheck the `Display title` checkbox.
 
-Since we are controlling the visibility of login and logout links in our custom module, we're going to leave the <strong>Roles</strong> tab under Visibility as <strong>Any role</strong>.
+Since we are controlling the visibility of login and logout links in our custom module, we're going to leave the `Roles` tab under Visibility as `Any role`.
 
-Click on <strong>Save block</strong>.
+Click on `Save block`.
 
 #### Default Blocks
 
-By default, Drupal will have a <strong>Site branding</strong> block, a <strong>Main navigation</strong> block, and a <strong>User account</strong> block.
+By default, Drupal will have a `Site branding` block, a `Main navigation` block, and a `User account` block.
 
-We're going to remove the <strong>User account</strong> block since we already have custom login/logout links. Click on the dropdown arrow next to the User account block and click on the <strong>Remove</strong> option.
+We're going to remove the `User account` block since we already have custom login/logout links. Click on the dropdown arrow next to the User account block and click on the `Remove` option.
 
-We're not using the <strong>Main navigation</strong> for authenticated users so we're going to set that to only be visible to anonymous users. Click on the <strong>Configure</strong> link next to the Main navigation block and click on the <strong>Roles</strong> tab under Visibility and select the <strong>Anonymous user</strong> role. Click on <strong>Save block</strong> when you are done.
+We're not using the `Main navigation` for authenticated users so we're going to set that to only be visible to anonymous users. Click on the `Configure` link next to the Main navigation block and click on the `Roles` tab under Visibility and select the `Anonymous user` role. Click on `Save block` when you are done.
 
-We want to move the <strong>Site branding</strong> block to the <strong>Secondary Menu</strong> region. You can achieve this by simple dragging and dropping the block into the region. Make sure to position it above the other two blocks and scroll down and click on <strong>Save blocks</strong>.
+We want to move the `Site branding` block to the `Secondary Menu` region. You can achieve this by simple dragging and dropping the block into the region. Make sure to position it above the other two blocks and scroll down and click on `Save blocks`.
 
-Finally, we only want to display the logo, so configure the <strong>Site branding</strong> block and uncheck the <strong>Display site name</strong> and <strong>Display site slogan</strong> checkboxes. Click on <strong>Save block</strong>.
+Finally, we only want to display the logo, so configure the `Site branding` block and uncheck the `Display site name` and `Display site slogan` checkboxes. Click on `Save block`.
 
 ## Next Steps
 This quickstart is a great way to get a proof of concept up and running quickly, but to run your application in production, there are some things you're going to want to do.
