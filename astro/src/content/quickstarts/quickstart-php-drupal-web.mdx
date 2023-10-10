@@ -59,7 +59,7 @@ In this section, you'll get FusionAuth up and running and use Composer to create
 First off, grab the code from the repository and change into that directory.
 
 ```
-git clone https://github.com/FusionAuth/fusionauth-quickstart-drupal-web.git
+git clone https://github.com/FusionAuth/fusionauth-quickstart-php-drupal-web.git
 cd fusionauth-quickstart-drupal-web
 ```
 
@@ -79,10 +79,10 @@ If you ever want to reset the FusionAuth system, delete the volumes created by d
 
 FusionAuth will be initially configured with these settings:
 
-* Your client Id is <code><RemoteValue url="https://raw.githubusercontent.com/FusionAuth/fusionauth-quickstart-drupal-web/main/kickstart/kickstart.json" selector="$.variables.applicationId" /></code>.
-* Your client secret is <code><RemoteValue url="https://raw.githubusercontent.com/FusionAuth/fusionauth-quickstart-drupal-web/main/kickstart/kickstart.json" selector="$.requests.[?(@.url === '/api/application/#{applicationId}')].body.application.oauthConfiguration.clientSecret" /></code>.
-* Your example username is <code><RemoteValue url="https://raw.githubusercontent.com/FusionAuth/fusionauth-quickstart-drupal-web/main/kickstart/kickstart.json" selector="$.variables.userEmail" /></code> and the password is <code><RemoteValue url="https://raw.githubusercontent.com/FusionAuth/fusionauth-quickstart-drupal-web/main/kickstart/kickstart.json" selector="$.variables.userPassword" /></code>.
-* Your admin username is <code><RemoteValue url="https://raw.githubusercontent.com/FusionAuth/fusionauth-quickstart-drupal-web/main/kickstart/kickstart.json" selector="$.variables.adminEmail" /></code> and the password is <code><RemoteValue url="https://raw.githubusercontent.com/FusionAuth/fusionauth-quickstart-drupal-web/main/kickstart/kickstart.json" selector="$.variables.adminPassword" /></code>.
+* Your client Id is <code><RemoteValue url="https://raw.githubusercontent.com/FusionAuth/fusionauth-quickstart-php-drupal-web/main/kickstart/kickstart.json" selector="$.variables.applicationId" /></code>.
+* Your client secret is <code><RemoteValue url="https://raw.githubusercontent.com/FusionAuth/fusionauth-quickstart-php-drupal-web/main/kickstart/kickstart.json" selector="$.requests.[?(@.url === '/api/application/#{applicationId}')].body.application.oauthConfiguration.clientSecret" /></code>.
+* Your example username is <code><RemoteValue url="https://raw.githubusercontent.com/FusionAuth/fusionauth-quickstart-php-drupal-web/main/kickstart/kickstart.json" selector="$.variables.userEmail" /></code> and the password is <code><RemoteValue url="https://raw.githubusercontent.com/FusionAuth/fusionauth-quickstart-drupal-web/main/kickstart/kickstart.json" selector="$.variables.userPassword" /></code>.
+* Your admin username is <code><RemoteValue url="https://raw.githubusercontent.com/FusionAuth/fusionauth-quickstart-php-drupal-web/main/kickstart/kickstart.json" selector="$.variables.adminEmail" /></code> and the password is <code><RemoteValue url="https://raw.githubusercontent.com/FusionAuth/fusionauth-quickstart-php-drupal-web/main/kickstart/kickstart.json" selector="$.variables.adminPassword" /></code>.
 * The base URL of FusionAuth `http://localhost:9011/`.
 
 You can log into the [FusionAuth admin UI](http://localhost:9011/admin) and look around if you want, but with Docker/Kickstart you don't need to.
@@ -92,7 +92,7 @@ You can log into the [FusionAuth admin UI](http://localhost:9011/admin) and look
 Now you are going to create a Drupal application. In your terminal, run the following command to pull the latest version of Drupal 10:
 
 ```bash
-composer create-project drupal/recommended-project:10.1.4 "changebank" && cd changebank
+composer create-project drupal/recommended-project:10.1.5 "changebank" && cd changebank
 ```
 
 Navigate to your browser and enter the path to your drupal installation.
@@ -106,7 +106,7 @@ Now that your Drupal application is installed, we're going to install a contribu
 Flip back to your terminal and run the following command:
 
 ```bash
-composer require 'drupal/openid_connect:^3.0@alpha' 'drupal/admin_toolbar:^3.4'
+composer require 'drupal/openid_connect:3.x-dev@dev' 'drupal/admin_toolbar:^3.4'
 ```
 
 To enable the modules, you can do so by visiting the extensions page of your Drupal application at /admin/modules or by running the following command:
@@ -867,9 +867,8 @@ Drupal is a very powerful CMS and there are many ways to customize it. Here are 
 
 * I get `This site can’t be reached  localhost refused to connect.` when I click the Login button
 
-Ensure FusionAuth is running in the Docker container.  You should be able to login as the admin user, <code><RemoteValue url="https://raw.githubusercontent.com/FusionAuth/fusionauth-quickstart-drupal-web/main/kickstart/kickstart.json" selector="$.variables.adminEmail" /></code> with a password of <code><RemoteValue url="https://raw.githubusercontent.com/FusionAuth/fusionauth-quickstart-drupal-web/main/kickstart/kickstart.json" selector="$.variables.adminPassword" /></code> at [http://localhost:9011/admin](http://localhost:9011/admin).
+Ensure FusionAuth is running in the Docker container.  You should be able to login as the admin user, <code><RemoteValue url="https://raw.githubusercontent.com/FusionAuth/fusionauth-quickstart-php-drupal-web/main/kickstart/kickstart.json" selector="$.variables.adminEmail" /></code> with a password of <code><RemoteValue url="https://raw.githubusercontent.com/FusionAuth/fusionauth-php-quickstart-drupal-web/main/kickstart/kickstart.json" selector="$.variables.adminPassword" /></code> at [http://localhost:9011/admin](http://localhost:9011/admin).
 
 * I get an error page when I click on the Login button with message of `"error_reason" : "invalid_client_id"`
 
 Ensure the value for `config.x.fusionauth.client_id` in the file `config/environments/development.rb` matches client Id configured in FusionAuth for the Example App Application at [http://localhost:9011/admin/application/](http://localhost:9011/admin/application/).
-
