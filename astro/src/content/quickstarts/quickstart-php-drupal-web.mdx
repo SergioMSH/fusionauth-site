@@ -25,16 +25,18 @@ https://github.com/FusionAuth/fusionauth-php-quickstart-drupal-web
 
 ## Prerequisites
 
-- [Composer](https://getcomposer.org/): This will be used to install a copy of Drupal and all required packages.
-- [Drupal](https://www.drupal.org/): We'll be grabbing the latest copy of Drupal 10.
-- [Drush](https://www.drupal.org/): This is used to control, manipulate and manage the Drupal application from the command line.
-- [Docker](https://www.docker.com): The quickest way to stand up FusionAuth. (There are [other ways](/docs/v1/tech/installation-guide/)).
+- [Composer](https://getcomposer.org/): This will be used to install a copy of Drupal and all required packages,
+- [Drupal](https://www.drupal.org/): We'll be grabbing the latest copy of Drupal 10,
+- [Drush](https://www.drupal.org/): This is used to control, manipulate and manage the Drupal application from the command line,
+- [Docker](https://www.docker.com): The quickest way to stand up FusionAuth. (There are [other ways](/docs/v1/tech/installation-guide/)),
+- A local `AMP` (Apache, MySQL, PHP) stack: You can use any local AMP stack you like, but we recommend:
+  - [WAMP](https://www.wampserver.com/en/download-wampserver-64bits/) for `Windows`, or; 
+  - [AMPPS](https://ampps.com/docs/installing-ampps/installing-on-mac-os/) for `MacOS`.
 
 This app has been tested with Drupal 10.1.5. This example should work with other compatible versions of Drupal 10.
 
-<Aside type="note">
-Drupal 10 requires PHP 8.1.0 or higher and MariaDB 10.3.7+ or MySQL/Percona 5.7.8+ in order to run.
-</Aside>
+
+> **NOTE**: Drupal 10 requires PHP 8.1.0 or higher and MariaDB 10.3.7+ or MySQL/Percona 5.7.8+ in order to run.
 
 ## General Architecture
 
@@ -73,9 +75,7 @@ docker compose up -d
 
 Here you are using a bootstrapping feature of FusionAuth, called [Kickstart](/docs/v1/tech/installation-guide/kickstart). When FusionAuth comes up for the first time, it will look at the `kickstart/kickstart.json` file and configure FusionAuth to a certain initial state.
 
-<Aside type="note">
-If you ever want to reset the FusionAuth system, delete the volumes created by docker-compose by executing `docker compose down -v`, then re-run `docker compose up -d`.
-</Aside>
+> **NOTE**: If you ever want to reset the FusionAuth system, delete the volumes created by docker-compose by executing `docker compose down -v`, then re-run `docker compose up -d`.
 
 FusionAuth will be initially configured with these settings:
 
@@ -87,6 +87,34 @@ FusionAuth will be initially configured with these settings:
 
 You can log into the [FusionAuth admin UI](http://localhost:9011/admin) and look around if you want, but with Docker/Kickstart you don't need to.
 
+### Configuring Hosts and Vhosts
+
+Before we install Drupal, we need to configure our hosts file and virtual hosts.
+
+Edit your operating system's host file and add the following entry:
+
+```
+127.0.0.1 dev.changebank.com
+```
+> **NOTE**: In Windows, the host file is located at `C:\Windows\System32\drivers\etc\hosts` and at `/private/etc/hosts` on MacOS.
+
+Edit the `httpd-vhosts.conf` Apache file for your WAMP or AMPPS installation and add the following entry:
+
+```
+#
+<VirtualHost *:80>
+  ServerName dev.changebank.com
+  ServerAlias dev.changebank.com
+  DocumentRoot "${INSTALL_DIR}/www/changebank/web/"
+  <Directory "${INSTALL_DIR}/www/changebank/web/">
+    Options +Indexes +Includes +FollowSymLinks +MultiViews
+    AllowOverride All
+    Require local
+  </Directory>
+</VirtualHost>
+```
+You will need to retart your webserver for the changes to take effect.
+
 ### Create your Drupal Application
 
 Now you are going to create a Drupal application. In your terminal, run the following command to pull the latest version of Drupal 10:
@@ -95,7 +123,7 @@ Now you are going to create a Drupal application. In your terminal, run the foll
 composer create-project drupal/recommended-project:10.1.5 "changebank" && cd changebank
 ```
 
-Navigate to your browser and enter the path to your drupal installation.
+Navigate to your browser and enter the path to your drupal installation, which in our case will be the path we defined in the virtual host configuration file, `http://dev.changebank.com`.
 
 Run through the installation wizard and fill in all required fields.
 
