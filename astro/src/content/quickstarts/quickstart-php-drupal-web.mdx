@@ -87,7 +87,17 @@ docker compose up -d
 
 Once the application is up and running, you can navigate to http://localhost/ and you should see the Drupal installation wizard.
 
-Run through the wizard and fill in all required fields. Make a note to enter the database name as `changebank`, the database user as `drupal` and the database password as `verybadpassword`. Also, make sure to select the port number 3307 for the database host.
+You need to ensure the following key information is entered during the installation process:
+
+- Select the `Standard` installation profile.
+- Select `MySQL, MariaDB, or equivalent` as the database type.
+- Enter `changebank` as the database name.
+- Enter `drupal` as the database username.
+- Enter `verybadpassword` as the database password.
+- Enter `fusionauth-quickstart-php-drupal-web-db2-1` as the database host.
+- Enter `3307` as the database port.
+
+> **NOTE**: You may receive an error that the installation wizard could not automatically create a settings.php file. If so, you can create the file manually by copying the default.settings.php file located at changebank/web/sites/default/ and renaming it to settings.php.
 
 Once you've successfully completed the installation wizard you should land up on the welcome page.
 
@@ -107,13 +117,13 @@ Alternatively, you can use drush to enable the modules. Drush is a command line 
 composer require drush/drush
 ```
 
-You might need to rebuild the docker containers and volumes for the changes to take effect. You can do so by running the following command:
+You might need to restart your containers for the changes to take effect. You can do so by running the following command:
 
 ```bash
-docker compose down -v && docker compose up -d
+docker-compose restart
 ```
 
-Once the containers are up and running, we want to enter the drupal container so that we can run drush commands. To do so, run the following command:
+Once the containers are up and running again, we want to enter the drupal container so that we can run drush commands. To do so, run the following command:
 
 ```bash
 docker exec -it fusionauth-quickstart-php-drupal-web-web-1 bash
@@ -141,7 +151,7 @@ Next, we're going to head over to FusionAuth and grab the client id and client s
 
 ### Run FusionAuth via Docker
 
-In the root directory of the repo you'll find a Docker compose file (docker-compose.yml) and an environment variables configuration file (.env). If you started the Drupal application, then the FusionAuth containers will already be running too. If not, you can start them by running the following command:
+In the root directory of the repo you'll find the Docker compose file (docker-compose.yml) we edited earlier and an environment variables configuration file (.env). If you started the Drupal application, then the FusionAuth containers will already be running too. If not, you can start them by running the following command:
 
 ```
 docker compose up -d
@@ -163,7 +173,7 @@ You can log into the [FusionAuth admin UI](http://localhost:9011/admin) and look
 
 ## Authentication
 
-To setup the authentication between Drupal and FusionAuth, head to /admin/config/people/openid-connect on your Drupal site or hover over Configuration > People and click on OpenID Connect.
+To setup the authentication between Drupal and FusionAuth, head to http://localhost/admin/config/people/openid-connect on your Drupal site or hover over Configuration > People and click on OpenID Connect.
 
 Add a new client by clicking on + Generic OAuth 2.0 and then filling in the details as follows:
 
@@ -176,11 +186,20 @@ Add a new client by clicking on + Generic OAuth 2.0 and then filling in the deta
 
 Click save to create the client.
 
+While on the page that lists your newly created client, click on the Settings tab above and then under the section "OpenID buttons display in user login form", change the value from "hidden" to "below" in order to display the login button on the login page.
+
+Click save to save the settings and then you will need to flush the cache for the changes to take effect.
+
+Flushing the cache in Drupal can be done in one of two ways:
+
+- Navigate to http://localhost/admin/config/development/performance and click on the `Clear all caches` button.
+- Run the folowing command inside the Drupal docker container: `vendor/bin/drush cr`
+
 ### Testing Authentication
 
 Now that we have the client configured, we can test the authentication flow.
 
-In the browser add /user/logout to logout of the Drupal application. Navigate to /user/login and click on the `Login with generic` button.
+Go to http://localhost/user/logout in your browser to logout of the Drupal application. Navigate to http://localhost/user/login and click on the `Login with generic` button.
 
 You should be taken to the FusionAuth login page. Enter the following credentials:
 
@@ -212,16 +231,16 @@ You will be presented with the module wizard. Fill it out as follows:
 ```
 Welcome to module generator!
 
-Module name [Web]:
+Module name:
 Changebank
 
 Module machine name [changebank]:
 changebank
 
-Module description [Provides additional functionality for the site.]:
+Module description:
 Provides a way to make change from whole dollars.
 
-Package name name [Custom]:
+Package [Custom]:
 Custom
 
 Dependencies (comma separated):
@@ -232,40 +251,19 @@ Yes
 Would you like to create a install file [No]:
 No
 
-Would you like to create a libraries file [No]:
+Would you like to create a README.md file [No]:
 No
 
-Would you like to create a permissions file [No]:
-No
-
-Would you like to create event subscriber [No]:
-No
-
-Would you like to create block plugin [No]:
-Yes
-
-Would you like to create a controller [No]:
-Yes
-
-Would you like to create a settings form [No]:
-No
 
 The following directories and files have been created or updated:
 
-- .../web/modules/custom/changebank/changebank.info.yml
-- .../web/modules/custom/changebank/changebank.module
-- .../web/modules/custom/changebank/changebank.routing.yml
-- .../web/modules/custom/changebank/src/Controller/ChangebankController.php
-- .../web/modules/custom/changebank/src/Plugin/Block/ExampleBlock.info.yml
+- /opt/drupal/web/modules/changebank/changebank.info.yml
+- /opt/drupal/web/modules/changebank/changebank.module
 ```
 
-The first block that was created when we generatd the module has a filename of `ExampleBlock.php` which is far too generic.
+We are now going to expand on the module by generating two blocks, a form, a controller and a routing file.
 
-Navigate to /web/modules/custom/changebank/src/Plugin/Block/ and rename it to `UserLoginLogoutBlock.php` which is more descriptive of its intended purpose.
-
-We're also going to generate an additional block and a form which we will do now.
-
-To generate the block, run the following command and complete the wizard:
+To generate the first block, run the following command and complete the wizard:
 
 ```bash
 vendor/bin/drush generate block 
@@ -276,7 +274,7 @@ You will be presented with the block wizard. Fill it out as follows:
 ```
 Welcome to block generator!
 
-Module machine name [web]:
+Module machine name:
 changebank
 
 Block admin label [Example]:
@@ -302,7 +300,47 @@ No
 
 The following directories and files have been created or updated:
 
-- .../web/modules/custom/changebank/src/Plugin/Block/UserEmailBlock.php
+- /opt/drupal/web/modules/changebank/src/Plugin/Block/UserEmailBlock.php
+```
+
+The second block is going to be very similar to the first, so we're going to generate it with the following command:
+
+```bash
+vendor/bin/drush generate block 
+```
+
+And then enter the following information:
+
+```
+Welcome to block generator!
+
+Module machine name:
+changebank
+
+Block admin label [Example]:
+User Login Logout Block
+
+Plugin ID [changebank_useremailblock]:
+userloginlogoutlock
+
+Plugin class [UserEmailBlockBlock]:
+UserLoginLogoutBlock
+
+Block category [Custom]:
+Custom
+
+Make the block configurable? [No]:
+No
+
+Would you like to inject dependencies? [No]:
+No
+
+Create access callback? [No]:
+No
+
+The following directories and files have been created or updated:
+
+- /opt/drupal/web/modules/changebank/src/Plugin/Block/UserLoginLogoutBlock.php
 ```
 
 To generate the form, run the following command:
@@ -316,7 +354,7 @@ You will be presented with the form wizard. Fill it out as follows:
 ```
 Welcome to form generator!
 
-Module machine name [web]:
+Module machine name:
 changebank
 
 Class [ExampleForm]:
@@ -327,13 +365,64 @@ No
 
 The following directories and files have been created or updated:
 
-- /var/www/html/web/modules/custom/changebank/src/Form/ChangebankForm.php
+- /opt/drupal/web/modules/changebank/src/Form/ChangebankForm.php
 ```
 
+Next, we're going to generate a controller with the following command:
+
+```bash
+vendor/bin/drush generate controller 
+```
+
+You will be presented with the controller wizard. Fill it out as follows:
+
+```
+Welcome to controller generator!
+
+Module machine name:
+changebank
+
+Module name [Changebank]:
+ChangebankForm
+
+Class [ChangebankController]:
+ChangebankController
+
+Would you like to inject dependencies? [No]:
+No
+
+Would you like to create a route for this controller? [Yes]:
+No
+
+The following directories and files have been created or updated:
+
+- /opt/drupal/web/modules/changebank/src/Controller/ChangebankController.php
+```
+Finally, we're going to generate a routing file with the following command:
+
+```bash
+vendor/bin/drush generate routing 
+```
+
+You will be presented with the routing wizard. Fill it out as follows:
+
+```
+Module machine name:
+changebank
+
+Module name [Changebank]:
+Changebank
+
+The following directories and files have been created or updated:
+
+- /opt/drupal/web/modules/changebank/changebank.routing.yml
+```
 
 ### Customizing the Module
 
-Next, we are going to customize the module by making changes to the following files:
+Now that we have all the files that we need in our custom module, we're going to  customize them to suit our needs.
+
+A summary of the files we will be editing are as follows:
 
 - `ChangebankForm.php`
 - `ChangebankController.php`
@@ -344,7 +433,7 @@ Next, we are going to customize the module by making changes to the following fi
 
 #### Customizing the Changebank Form
 
-Select the form `ChangebankForm.php` located at /web/modules/custom/changebank/src/Form/ in your text editor, clear the existing boilerplate contents and add the following in:
+Select the form `ChangebankForm.php` located at /web/modules/changebank/src/Form/ in your text editor, clear the existing boilerplate contents and add the following in:
 
 ```php
 <?php
@@ -390,7 +479,7 @@ class ChangebankForm extends FormBase {
       '#title' => $this->t('Amount in USD: $'),
       '#required' => TRUE,
       '#min' => 1,
-      '#step' => 1.0,
+      '#step' => 0.01,
     ];
     $form['submit'] = [
       '#type' => 'submit',
@@ -452,7 +541,7 @@ class ChangebankForm extends FormBase {
 
 #### Customizing the Controller
 
-Select the `ChangebankController.php` file located at /web/modules/custom/changebank/src/Controller/ in your text editor and make the following changes:
+Select the `ChangebankController.php` file located at /web/modules/changebank/src/Controller/ in your text editor and make the following changes:
 
 ```php
 <?php
@@ -499,7 +588,7 @@ class ChangebankController extends ControllerBase {
 
 #### Customizing the Routing
 
-Next we're going to setup two routes, one for the form and one for the account page. Select the `changebank.routing.yml` file located at /web/modules/custom/changebank/ and make the following changes:
+Next we're going to setup two routes, one for the form and one for the account page. Select the `changebank.routing.yml` file located at /web/modules/changebank/ and make the following changes:
 
 ```yaml
 changebank.makechange:
@@ -595,7 +684,7 @@ class UserEmailBlock extends BlockBase implements ContainerFactoryPluginInterfac
 
 #### Customizing User Login Logout Block
 
-We're going to create a block that will display a login button for anonymous users and a logout button for authenticated users. Select the `UserLoginLogoutBlock.php` file located at /web/modules/custom/changebank/src/Plugin/Block/ and make the following changes:
+We're going to create a block that will display a login button for anonymous users and a logout button for authenticated users. Select the `UserLoginLogoutBlock.php` file located at /web/modules/changebank/src/Plugin/Block/ and make the following changes:
 
 ```php
 <?php
@@ -675,7 +764,7 @@ class UserLoginLogoutBlock extends BlockBase implements ContainerFactoryPluginIn
 
 #### Customizing the .Module File
 
-In order to make the blocks available to the application, we need to make some changes to the `changebank.module` file located at /web/modules/custom/changebank/ and add the following:
+In order to make the blocks available to the application, we need to make some changes to the `changebank.module` file located at /web/modules/changebank/ and add the following:
 
 ```php
 <?php
@@ -715,11 +804,13 @@ vendor/bin/drush pm-enable changebank
 
 ### Add Styling
 
-#### Download Theme
-
 At this point we have a working application that can make change from whole dollars.
 
 But... it's not very pretty.
+
+First we're going to add a theme to the application, along with a couple of templates and some basic styling.
+
+#### Download Theme
 
 We're going to grab a theme called Barrio Bootstrap 5 which will give us a nice starting point for styling the application.
 
@@ -747,7 +838,7 @@ Uncheck the `Use the logo supplied by the theme` checkbox and upload the Changeb
 
 In the subtheme directory of our application, we're going to add a couple of templates that will override the default templates provided by the Bootstrap Barrio theme. This will allow us to customize the markup of the application.
 
-Navigate to /web/themes/custom/subtheme/templates/. If the templates directory is not there then you may hae to create it.
+Navigate to /web/themes/custom/subtheme/templates/. If the templates directory is not there then you may have to create it.
 
 Inside the templates directory we are going to create the following files:
 
@@ -1218,7 +1309,6 @@ FusionAuth gives you the ability to customize just about everything with the use
 Drupal is a very powerful CMS and there are many ways to customize it. Here are a few things you may want to do:
 * Increase the functionality of the make change form, such as adding a field for the amount of change to make or specifying the type of change to make (quarters, dimes, nickels, pennies)
 * Add additional functionality to the application, such as a way to deposit and withdraw money from the account and keep track of all transactions on the account page.
-* Customize the FusionAuth login button.
 
 ## Troubleshooting
 
@@ -1243,3 +1333,11 @@ Once installed, you can convert the line endings of the file by running the foll
 ```
 dos2unix /opt/drupal/vendor/bin/drush
 ```
+
+* I get the followign error during the Drupal installation wizard: `The Settings file does not exist.`
+
+Drupal will try to automatically create a settings.php configuration file, which is normally in the directory sites/default (to avoid problems when upgrading, Drupal is not packaged with this file). If auto-creation fails, you will need to create this file yourself, using the file sites/default/default.settings.php as a template.
+
+Create a settings file by navigating to /changebank/web/sites/default/, copying default.settings.php and renaming it to settings.php.
+
+For more information about the Drupal installation process, refer to the document located at http://localhost/core/INSTALL.txt.
