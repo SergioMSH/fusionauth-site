@@ -195,9 +195,15 @@ Flushing the cache in Drupal can be done in one of two ways:
 - Navigate to http://localhost/admin/config/development/performance and click on the `Clear all caches` button.
 - Run the folowing command inside the Drupal docker container: `vendor/bin/drush cr`
 
+Before we test the authentication flow, we need to make a small change to allow visitors to create accounts on the Drupal application.
+
+Navigate to http://localhost/admin/config/people/accounts and under the section "Who can register accounts?" select "Visitors" and then untick the checkbox next to "Require email verification when a visitor creates an account".
+
+Click save when yoyu are done.
+
 ### Testing Authentication
 
-Now that we have the client configured, we can test the authentication flow.
+Now that we have the client configured and have allowed visitors to create an account, we can test the authentication flow.
 
 Go to http://localhost/user/logout in your browser to logout of the Drupal application. Navigate to http://localhost/user/login and click on the `Login with generic` button.
 
