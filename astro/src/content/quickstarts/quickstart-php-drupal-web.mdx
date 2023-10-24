@@ -796,7 +796,7 @@ function changebank_block_info() {
 
 #### Enable the Changebank Module
 
-Finally, we need to enable the Changebank module. To do so, navigate to /admin/modules and select the checkbox next to Changebank and then click on the `Install` button or run the following command inside the Drupal docker container:
+We need to enable the Changebank module. To do so, navigate to /admin/modules and select the checkbox next to Changebank and then click on the `Install` button or run the following command inside the Drupal docker container:
 
 ```bash
 vendor/bin/drush pm-enable changebank
@@ -1295,6 +1295,16 @@ We're not using the `Main navigation` for authenticated users so we're going to 
 We want to move the `Site branding` block to the `Secondary Menu` region. You can achieve this by simple dragging and dropping the block into the region. Make sure to position it above the other two blocks and scroll down and click on `Save blocks`.
 
 Finally, we only want to display the logo, so configure the `Site branding` block and uncheck the `Display site name` and `Display site slogan` checkboxes. Click on `Save block`.
+
+## Set Login Redirect
+
+Navigate to localhost/admin/config/people/openid-connect where we were earlier to create the client and once again click on the settings tab.
+
+Since we have have the /account route setup in our custom module, let's make sure that the user is redirected to that page after logging in and not the standard user page.
+
+Scroll down to the redirects section and enter `account` in the login redirect field.
+
+Save the configuration and clear the cache. Logout and back in to test that the redirect is working correctly.
 
 ## Next Steps
 This quickstart is a great way to get a proof of concept up and running quickly, but to run your application in production, there are some things you're going to want to do.
