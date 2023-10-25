@@ -193,13 +193,13 @@ Click save to save the settings and then you will need to flush the cache for th
 Flushing the cache in Drupal can be done in one of two ways:
 
 - Navigate to http://localhost/admin/config/development/performance and click on the `Clear all caches` button.
-- Run the folowing command inside the Drupal docker container: `vendor/bin/drush cr`
+- Run the following command inside the Drupal docker container: `vendor/bin/drush cr`
 
 Before we test the authentication flow, we need to make a small change to allow visitors to create accounts on the Drupal application.
 
 Navigate to http://localhost/admin/config/people/accounts and under the section "Who can register accounts?" select "Visitors" and then untick the checkbox next to "Require email verification when a visitor creates an account".
 
-Click save when yoyu are done.
+Click save when you are done.
 
 ### Testing Authentication
 
@@ -389,7 +389,7 @@ Module machine name:
 changebank
 
 Module name [Changebank]:
-ChangebankForm
+Changebank
 
 Class [ChangebankController]:
 ChangebankController
@@ -426,7 +426,7 @@ The following directories and files have been created or updated:
 
 ### Customizing the Module
 
-Now that we have all the files that we need in our custom module, we're going to  customize them to suit our needs.
+Now that we have all the files that we need in our custom module, we're going to customize them to suit our needs.
 
 A summary of the files we will be editing are as follows:
 
@@ -617,7 +617,7 @@ changebank.account:
 
 #### Customizing User Email Block
 
-We want to display the current user's email address in a block and we're going to use the User Email Block to do so. Select the `UserEmailBlock.php` file located at /web/modules/custom/changebank/src/Plugin/Block/ and make the following changes:
+We want to display the current user's email address in a block and we're going to use the User Email Block to do so. Select the `UserEmailBlock.php` file located at /web/modules/changebank/src/Plugin/Block/ and make the following changes:
 
 ```php
 <?php
@@ -802,7 +802,7 @@ function changebank_block_info() {
 
 #### Enable the Changebank Module
 
-We need to enable the Changebank module. To do so, navigate to /admin/modules and select the checkbox next to Changebank and then click on the `Install` button or run the following command inside the Drupal docker container:
+We need to enable the Changebank module. To do so, navigate to http://localhost/admin/modules and select the checkbox next to Changebank and then click on the `Install` button or run the following command inside the Drupal docker container:
 
 ```bash
 vendor/bin/drush pm-enable changebank
@@ -1304,7 +1304,7 @@ Finally, we only want to display the logo, so configure the `Site branding` bloc
 
 ## Set Login Redirect
 
-Navigate to localhost/admin/config/people/openid-connect where we were earlier to create the client and once again click on the settings tab.
+Navigate to http://localhost/admin/config/people/openid-connect where we were earlier to create the client and once again click on the settings tab.
 
 Since we have have the /account route setup in our custom module, let's make sure that the user is redirected to that page after logging in and not the standard user page.
 
@@ -1325,6 +1325,9 @@ FusionAuth gives you the ability to customize just about everything with the use
 Drupal is a very powerful CMS and there are many ways to customize it. Here are a few things you may want to do:
 * Increase the functionality of the make change form, such as adding a field for the amount of change to make or specifying the type of change to make (quarters, dimes, nickels, pennies)
 * Add additional functionality to the application, such as a way to deposit and withdraw money from the account and keep track of all transactions on the account page.
+* Add the ability to generate a transaction history report as a downloadable PDF.
+* Setup custom roles for Tellers and Customers, where Tellers can see summaries of all transactions and Customers can only see their own transactions.
+* Add a way to transfer money between accounts.
 
 ## Troubleshooting
 
