@@ -826,17 +826,71 @@ Run the following command to download the theme:
 composer require 'drupal/bootstrap_barrio:^5.5'
 ```
 
+#### Create Subtheme
+
+Next, we're going to create a subtheme of the Barrio Bootstrap 5 theme.
+
+Navigate to /web/themes/contrib/bootstrap_barrio. Inside that directory you will notice a folder labelled `subtheme`.
+
+Copy the `subtheme` folder and navigate to /web/themes/. Create a folder called `custom`, enter it and then paste the `subtheme` folder inside.
+
+Enter the subtheme folder and edit the file labelled `bootstrap_barrio_subtheme.info.yml`. Change the name of the theme from `Bootstrap Barrio Subtheme` to `Changebank` and change the description from `Subtheme for Bootstrap Barrio` to `Subtheme for Changebank`.
+
+The file should look like this:
+
+```yaml
+name: Changebank
+type: theme
+description: 'Subtheme for Changebank'
+core: 8.x
+core_version_requirement: ^8 || ^9 || ^10
+base theme: bootstrap_barrio
+
+libraries:
+  - bootstrap_barrio_subtheme/bootstrap_cdn
+  - bootstrap_barrio_subtheme/global-styling
+
+regions:
+  top_header: 'Top header'
+  top_header_form: 'Top header form'
+  header: Header
+  header_form: 'Header form'
+  primary_menu: 'Primary menu'
+  secondary_menu: 'Secondary menu'
+  page_top: 'Page top'
+  page_bottom: 'Page bottom'
+  highlighted: Highlighted
+  featured_top: 'Featured top'
+  breadcrumb: Breadcrumb
+  content: Content
+  sidebar_first: 'Sidebar first'
+  sidebar_second: 'Sidebar second'
+  featured_bottom_first: 'Featured bottom first'
+  featured_bottom_second: 'Featured bottom second'
+  featured_bottom_third: 'Featured bottom third'
+  footer_first: 'Footer first'
+  footer_second: 'Footer second'
+  footer_third: 'Footer third'
+  footer_fourth: 'Footer fourth'
+  footer_fifth: 'Footer fifth'
+
+# Information added by Drupal.org packaging script on 2023-10-02
+version: '5.5.14'
+project: 'bootstrap_barrio'
+datestamp: 1696219327
+```
+
 #### Enable Theme
 
-Now, we're going to enable the theme.
+Now, we're going to enable the themes.
 
-Select the `Appearance` link in the administration menu and click on the `Install` button for both Bootstrap Barrio 5.5.14 and Bootstrap Barrio Subtheme 5.5.14.
+Select the `Appearance` link in the administration menu and click on the `Install` button for both Bootstrap Barrio 5.5.14 and Changebank 5.5.14.
 
-Click on the `Set as default` button for Bootstrap Barrio Subtheme 5.5.14.
+Click on the `Set as default` button for Changebank 5.5.14.
 
 While we are here, let's add the Changebank logo to our application.
 
-Click on `Settings` on Bootstrap Barrio Subtheme 5.5.14, scroll down and click on `Logo image`.
+Click on `Settings` on Changebank 5.5.14, scroll down and click on `Logo image`.
 
 Uncheck the `Use the logo supplied by the theme` checkbox and upload the Changebank logo from https://github.com/SergioMSH/fusionauth-quickstart-php-drupal-web/blob/main/complete-application/web/sites/default/files/changebank-logo.png.
 
