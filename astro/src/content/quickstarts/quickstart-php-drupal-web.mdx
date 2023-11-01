@@ -894,6 +894,22 @@ Click on `Settings` on Changebank 5.5.14, scroll down and click on `Logo image`.
 
 Uncheck the `Use the logo supplied by the theme` checkbox and upload the Changebank logo from https://github.com/SergioMSH/fusionauth-quickstart-php-drupal-web/blob/main/complete-application/web/sites/default/files/changebank-logo.png.
 
+#### Install & Enable Twig Tweak
+
+We're going to use a module called Twig Tweak to make it easier to render content in our templates. Twig Tweak is a small module which provides a Twig extension with some useful functions and filters that can improve the developer experience.
+
+Run the following command inside the changebank directory to download the module:
+
+```bash
+composer require 'drupal/twig_tweak:^3.2'
+```
+
+Enable the module by navigating to http://localhost/admin/modules and selecting the checkbox next to Twig Tweak and then clicking on the `Install` button or by running the following command inside the Drupal docker container:
+
+```bash
+vendor/bin/drush pm-enable twig_tweak
+```
+
 #### Add Templates
 
 In the subtheme directory of our application, we're going to add a couple of templates that will override the default templates provided by the Bootstrap Barrio theme. This will allow us to customize the markup of the application.
@@ -906,7 +922,15 @@ Inside the templates directory we are going to create the following files:
 - `block--system-branding-block.html.twig`
 - `region--secondary-menu.html.twig`
 
-Inside the page template for the front page, denoted by the `page--front.html.twig` filename, add the following:
+The `page--front.html.twig` file uses an image that we don't currently have in our filesystem so before we add the twig file let's grab the image.
+
+Since we are building a changebank, we need to get an image of money to use on the homepage.
+
+The image that we will use is located at https://github.com/SergioMSH/fusionauth-quickstart-php-drupal-web/blob/main/complete-application/web/sites/default/files/money-new.jpg.
+
+Download the image from the above link, or copy it from the complete application directory, and copy it into the files directory of the changebank application at /changebank/web/sites/default/files/.
+
+Inside the page template for the front page, `page--front.html.twig`, add the following:
 
 ```twig
 {% extends "@bootstrap_barrio/layout/page.html.twig" %}
@@ -1349,6 +1373,8 @@ Click on `Save block`.
 By default, Drupal will have a `Site branding` block, a `Main navigation` block, and a `User account` block.
 
 We're going to remove the `User account` block since we already have custom login/logout links. Click on the dropdown arrow next to the User account block and click on the `Remove` option.
+
+The theme will also have other default blocks such as `Search Form Wide` (bootstrap_barrio_subtheme_search_form_wide) and `Search Form Narrow` (bootstrap_barrio_subtheme_search_form_narrow) located in the Top header form and Sidebar first regions respectively. We're going to remove these as well since we are not going to be using search functionality, so click on the dropdown arrow next to each block and click on the `Remove` option.
 
 We're not using the `Main navigation` for authenticated users so we're going to set that to only be visible to anonymous users. Click on the `Configure` link next to the Main navigation block and click on the `Roles` tab under Visibility and select the `Anonymous user` role. Click on `Save block` when you are done.
 
